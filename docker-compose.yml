@@ -1,0 +1,189 @@
+services:
+  #MYSQL ORDER
+  mysql-order:
+    image: mysql:8.0
+    container_name: mysql-order
+    environment:
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+      MYSQL_DATABASE: order_db
+      MYSQL_USER: ordermysql
+      MYSQL_PASSWORD: mysqlpassword
+    ports:
+      - "3307:3306"
+    volumes:
+      - ./services/order-service/init_script/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  #MYSQL PAYMENT
+  mysql-payment:
+    image: mysql:8.0
+    container_name: mysql-payment
+    environment:
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+      MYSQL_DATABASE: payment_db
+      MYSQL_USER: paymentmysql
+      MYSQL_PASSWORD: mysqlpassword
+    ports:
+      - "3308:3306"
+    volumes:
+      - ./services/payment-service/init_script/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  # #MYSQL PRODUCT
+  mysql-product:
+    image: mysql:8.0
+    container_name: mysql-product
+    environment:
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+      MYSQL_DATABASE: product_db
+      MYSQL_USER: productmysql
+      MYSQL_PASSWORD: mysqlpassword
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./services/product-service/init_script/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  # #MYSQL USER
+  mysql-user:
+    image: mysql:8.0
+    container_name: mysql-user
+    environment:
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+      MYSQL_DATABASE: user_db
+      MYSQL_USER: usermysql
+      MYSQL_PASSWORD: mysqlpassword
+    ports:
+      - "3310:3306"
+    volumes:
+      - ./services/user-service/init_script/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  # #MYSQL VOUCHER
+  mysql-voucher:
+    image: mysql:8.0
+    container_name: mysql-voucher
+    environment:
+      LANG: C.UTF-8
+      MYSQL_ROOT_PASSWORD: mysqlpassword
+      MYSQL_DATABASE: voucher_db
+      MYSQL_USER: vouchermysql
+      MYSQL_PASSWORD: mysqlpassword
+    ports:
+      - "3311:3306"
+    volumes:
+      - ./services/voucher-service/init_script/init.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  #SERVICE PRODUCT
+  service-product:
+    build: ./services/product-service
+    ports:
+      - "8082:8082"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-product:3306/product_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=productmysql
+      - SPRING_DATASOURCE_PASSWORD=mysqlpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_SHOW_SQL=true
+
+    depends_on:
+      - mysql-product
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  #SERVICE ORDER
+  service-order:
+    build: ./services/order-service
+    ports:
+      - "8083:8083"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-order:3306/order_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=ordermysql
+      - SPRING_DATASOURCE_PASSWORD=mysqlpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_SHOW_SQL=true
+
+    depends_on:
+      - mysql-order
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  #SERVICE PAYMENT
+  service-payment:
+    build: ./services/payment-service
+    ports:
+      - "8085:8085"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-payment:3306/payment_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=paymentmysql
+      - SPRING_DATASOURCE_PASSWORD=mysqlpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_SHOW_SQL=true
+
+    depends_on:
+      - mysql-payment
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  #SERVICE USER
+  service-user:
+    build: ./services/user-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-user:3306/user_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=usermysql
+      - SPRING_DATASOURCE_PASSWORD=mysqlpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_SHOW_SQL=true
+
+    depends_on:
+      - mysql-user
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+  #SERVICE VOUCHER
+  service-voucher:
+    build: ./services/voucher-service
+    ports:
+      - "8084:8084"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql-voucher:3306/voucher_db?useSSL=false&allowPublicKeyRetrieval=true
+      - SPRING_DATASOURCE_USERNAME=vouchermysql
+      - SPRING_DATASOURCE_PASSWORD=mysqlpassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_PROPERTIES_HIBERNATE_DIALECT=org.hibernate.dialect.MySQLDialect
+      - SPRING_JPA_SHOW_SQL=true
+
+    depends_on:
+      - mysql-voucher
+    networks:
+      - microservices-network
+    restart: unless-stopped
+
+networks:
+  microservices-network:
+    driver: bridge
