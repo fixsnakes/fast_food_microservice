@@ -1,0 +1,31 @@
+# Đảm bảo mã nguồn sử dụng mã hóa UTF-8
+* text=auto eol=lf
+
+# Xử lý các file Java (.java)
+*.java text diff=java
+
+# Xử lý các file cấu hình Spring (ví dụ: application.properties, application.yml)
+*.properties text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+
+# Các file Maven wrapper
+.mvn/* text eol=lf
+
+# Các file cấu hình IDE
+.idea/* text eol=lf
+
+# Các file nhị phân
+*.class binary
+*.jar binary
+*.war binary
+*.ear binary
+*.zip binary
+*.tar.gz binary
+*.tgz binary
+
+# Các file Markdown
+*.md text
+
+# Các file logs
+*.log text

@@ -1,0 +1,40 @@
+# Các thư mục build của Java
+/target/
+/.idea/
+/*.iml
+
+# Các thư mục của Maven
+/.mvn/
+!/.mvn/wrapper/maven-wrapper.jar
+
+# Thư mục của Gradle
+/.gradle/
+build/
+
+# Các file hệ thống
+.DS_Store
+Thumbs.db
+
+# Các file log
+*.log
+
+# Các thư mục chứa file cấu hình IDE
+.vscode/
+
+# Các file nhạy cảm
+application.properties
+application.yml
+*.env
+
+# Thư mục chứa các file biên dịch của ứng dụng (nếu có)
+*.class
+
+# Thư mục chứa các file phân tích tĩnh (nếu có)
+/node_modules/
+
+# Các file IntelliJ IDEA
+.idea/
+*.iml
+
+# Các file GitHub Actions
+.github/
